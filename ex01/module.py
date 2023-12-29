@@ -1,4 +1,6 @@
 
+
+
 def do():
     print("Welcome to ex01")
     teams = _create_team()
