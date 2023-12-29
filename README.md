@@ -8,4 +8,5 @@ python3 -m venv venv
 source venv/bin/activate # out : deactivate
 ```
 
-## ex
+## exercise list
+* [arrange the match schedule](./ex01/README.md)
