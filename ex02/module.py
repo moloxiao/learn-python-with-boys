@@ -14,6 +14,9 @@ def print_sudoku(sudoku_data):
             print()
 
 def cal_wait_numbers(sudoku_data):
+    """
+    计算尚未解答的点数
+    """
     wait_numbers = 0
     for i in range(len(sudoku_data)):
         if sudoku_data[i] == 0:
@@ -42,6 +45,10 @@ def _cal_coordinate(pos):
     y = int(pos/9) + 1
     point = Point(pos, x, y)
     return point
+
+def _cal_pos_by_coordinate(pont):
+    pos = (pont.y-1)*9 + pont.x - 1
+    return pos
     
 def _allow_numbers(sudoku_data, pos):
     """
@@ -60,7 +67,8 @@ def _allow_numbers(sudoku_data, pos):
     use_numbers = _use_numbers_in_vertical(sudoku_data, point) # 1 竖排有没有重复
     use_numbers = _use_numbers_in_horizontal(sudoku_data, point, use_numbers)# 2 横排有没有重复
     use_numbers = list(set(use_numbers))
-    # 3 小三角有没有重复
+    use_numbers = _use_numbers_in_small_triangle(sudoku_data, point, use_numbers)# 3 小三角有没有重复
+    use_numbers = list(set(use_numbers))
 
     return use_numbers
 
@@ -116,3 +124,37 @@ def find_missing_number(arr):
 
     # Return the missing number (there should be only one)
     return missing_number.pop()
+
+def _use_numbers_in_small_triangle(sudoku_data, point, use_numbers):
+    """
+    检查小三角中存在的数字
+
+    Parameters:
+    sudoku_data (list): sudoku data
+    point (Point) : current point.
+    use_numbers (list) : 前面计算已经存在的数字
+
+    Returns:
+    list : 添加了小三角中已经存在数字的新数组
+    """
+    top_point = _small_triangle_toppoint(point)
+    for y in range(3):
+        for x in range(3):
+            y1 = top_point.y + y
+            x1 = top_point.x + x
+            pos = _cal_pos_by_coordinate(Point(0, x1, y1))
+            if sudoku_data[pos] != 0:
+                use_numbers.append(sudoku_data[pos])
+    
+    return use_numbers
+
+def _small_triangle_toppoint(point):
+    """
+    计算所处小三角形的左上角点
+    """
+    x1 = int((point.x-1)/3) + 1
+    y1 = int((point.y-1)/3) + 1
+    
+    x2 = (x1-1)*3 + 1
+    y2 = (y1-1)*3 + 1
+    return Point(0, x2, y2)
